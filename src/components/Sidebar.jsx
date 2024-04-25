@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 import "./css/Sidebar.css";
 
 function Sidebar() {
@@ -6,10 +6,26 @@ function Sidebar() {
     <div className="background">
       <div className="white-color">Samantha</div>
       <div className="gray-color">card_number or username</div>
-      <div className="gray-color">Dashboard</div>
-      <div className="gray-color">Budget</div>
-      <div className="gray-color">Accounts</div>
-      <div className="gray-color">Settings</div>
+      <div>
+        <Link to="/" className="gray-color">
+          Dashboard
+        </Link>
+      </div>
+      <div>
+        <Link to="/budget" className="gray-color">
+          Budget
+        </Link>
+      </div>
+      <div>
+        <Link to="/accounts" className="gray-color">
+          Accounts
+        </Link>
+      </div>
+      <div>
+        <Link to="/settings" className="gray-color">
+          Settings
+        </Link>
+      </div>
     </div>
   );
 }
