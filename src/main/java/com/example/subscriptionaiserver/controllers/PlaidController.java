@@ -13,7 +13,9 @@ public class PlaidController {
     }
 
     @GetMapping("/get-access-token")
-    public ResponseEntity<String> getAccessToken()
+    public ResponseEntity<String> getAccessToken() {
+
+    }
 
 
 }
