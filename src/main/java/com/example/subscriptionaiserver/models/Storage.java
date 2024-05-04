@@ -9,8 +9,26 @@ public class Storage {
 
     @Id
     @GeneratedValue
-    private Long storageId;
+    private int storageId;
     private String accessToken;
+    private String username;
+    private String encrPass;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEncrPass() {
+        return encrPass;
+    }
+
+    public void setEncrPass(String encrPass) {
+        this.encrPass = encrPass;
+    }
 
     public String getAccessToken() {
         return accessToken;
@@ -20,11 +38,11 @@ public class Storage {
         this.accessToken = accessToken;
     }
 
-    public void setStorageId(Long storageId) {
+    public void setStorageId(int storageId) {
         this.storageId = storageId;
     }
 
-    public Long getStorageId() {
+    public int getStorageId() {
         return storageId;
     }
 }
