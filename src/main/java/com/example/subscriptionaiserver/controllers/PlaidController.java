@@ -5,6 +5,7 @@ import com.example.subscriptionaiserver.DTOs.ClientInfoDTO;
 import com.plaid.client.ApiClient;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
+import com.plaid.client.model.LinkTokenCreateRequestUser;
 import com.plaid.client.request.PlaidApi;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,12 @@ public class PlaidController {
         return apiClient.createService(PlaidApi.class);
     }
 
-    @GetMapping("/link-token")
+    @PostMapping("/link-token")
     public ResponseEntity<String> createLinkToken(@RequestBody ClientInfoDTO infoDTO) {
        PlaidApi client = initializeKeys();
+        System.out.println(infoDTO.getLanguage());
+       // Create link token request based on the information given from our DTO.
+
        return new ResponseEntity<>("message sample", HttpStatus.OK);
     }
 

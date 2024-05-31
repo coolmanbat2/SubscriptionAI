@@ -2,23 +2,25 @@ package com.example.subscriptionaiserver.DTOs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClientInfoDTO {
-    private HashMap<String, String> User;
+    private List<Map<String, String>> User;
     private String clientName;
     private ArrayList<String> products;
-    private HashMap<String, Integer> transactions;
-    private String countryCodes;
+    private ArrayList<Map<String, Integer>> transactions;
+    private ArrayList<String> countryCodes;
     private String language;
     private String redirectURI;
-    private HashMap<String, HashMap<String, ArrayList<String>>> accountFilters;
-    private HashMap<String, String> credit;
+    private Map<String, ArrayList<Map<String, ArrayList<String>>>> accountFilters;
+    private ArrayList<Map<String, ArrayList<String>>> credit;
 
-    public HashMap<String, String> getUser() {
+    public List<Map<String, String>> getUser() {
         return User;
     }
 
-    public void setUser(HashMap<String, String> user) {
+    public void setUser(List<Map<String, String>> user) {
         User = user;
     }
 
@@ -38,19 +40,19 @@ public class ClientInfoDTO {
         this.products = products;
     }
 
-    public HashMap<String, Integer> getTransactions() {
+    public ArrayList<Map<String, Integer>> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(HashMap<String, Integer> transactions) {
+    public void setTransactions(ArrayList<Map<String, Integer>> transactions) {
         this.transactions = transactions;
     }
 
-    public String getCountryCodes() {
+    public ArrayList<String> getCountryCodes() {
         return countryCodes;
     }
 
-    public void setCountryCodes(String countryCodes) {
+    public void setCountryCodes(ArrayList<String> countryCodes) {
         this.countryCodes = countryCodes;
     }
 
@@ -70,19 +72,19 @@ public class ClientInfoDTO {
         this.redirectURI = redirectURI;
     }
 
-    public HashMap<String, HashMap<String, ArrayList<String>>> getAccountFilters() {
+    public Map<String, ArrayList<Map<String, ArrayList<String>>>> getAccountFilters() {
         return accountFilters;
     }
 
-    public void setAccountFilters(HashMap<String, HashMap<String, ArrayList<String>>> accountFilters) {
+    public void setAccountFilters(Map<String, ArrayList<Map<String, ArrayList<String>>>> accountFilters) {
         this.accountFilters = accountFilters;
     }
 
-    public HashMap<String, String> getCredit() {
+    public ArrayList<Map<String, ArrayList<String>>> getCredit() {
         return credit;
     }
 
-    public void setCredit(HashMap<String, String> credit) {
+    public void setCredit(ArrayList<Map<String, ArrayList<String>>> credit) {
         this.credit = credit;
     }
 }
