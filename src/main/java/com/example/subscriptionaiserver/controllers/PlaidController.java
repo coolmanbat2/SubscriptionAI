@@ -2,28 +2,27 @@ package com.example.subscriptionaiserver.controllers;
 
 
 import com.example.subscriptionaiserver.DTOs.ClientInfoDTO;
+import com.example.subscriptionaiserver.exceptions.LinkTokenCreationFailedException;
 import com.plaid.client.ApiClient;
-import com.plaid.client.model.ItemPublicTokenExchangeRequest;
-import com.plaid.client.model.ItemPublicTokenExchangeResponse;
-import com.plaid.client.model.LinkTokenCreateRequestUser;
+import com.plaid.client.model.*;
 import com.plaid.client.request.PlaidApi;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController("/")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PlaidController {
-    private String accessToken;
-    private ResponseEntity<String> result;
-    String clientID = System.getenv("CLIENT_ID");
-    String secretKey = System.getenv("SECRET");
+    @Value("${plaid.client.id}")
+    String clientID;
+    @Value("${plaid.client.secret}")
+    String secretKey;
 
     private PlaidApi initializeKeys() {
         HashMap<String,String> apiKeys = new HashMap<>();
@@ -35,41 +34,52 @@ public class PlaidController {
     }
 
     @PostMapping("/link-token")
-    public ResponseEntity<String> createLinkToken(@RequestBody ClientInfoDTO infoDTO) {
+    public ResponseEntity<LinkTokenCreateResponse> createLinkToken(@RequestBody ClientInfoDTO infoDTO) throws IOException, LinkTokenCreationFailedException {
        PlaidApi client = initializeKeys();
-        System.out.println(infoDTO.getLanguage());
-       // Create link token request based on the information given from our DTO.
 
-       return new ResponseEntity<>("message sample", HttpStatus.OK);
+       Map<String, String> userValues = infoDTO.getUser().get(0);
+
+       LinkTokenCreateRequestUser user = new LinkTokenCreateRequestUser()
+               .clientUserId(userValues.get("clientUserId"))
+               .phoneNumber(userValues.get("phoneNumber"))
+               .legalName(userValues.get("legalName"));
+
+        LinkTokenCreateRequest requestToken = new LinkTokenCreateRequest()
+                .user(user)
+                .clientName(infoDTO.getClientName())
+                .products(infoDTO.getProducts())
+                .countryCodes(infoDTO.getCountryCodes())
+                .language(infoDTO.getLanguage())
+                .redirectUri(infoDTO.getRedirectURI())
+                .clientId(clientID)
+                .secret(secretKey);
+
+
+        LinkTokenCreateResponse response = client.linkTokenCreate(requestToken).execute().body();
+
+        if (response == null) {
+            throw new LinkTokenCreationFailedException("Link Token Creation Failed!");
+        }
+
+
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/exchange-token")
-    public ResponseEntity<String> exchangeToken(@RequestBody String public_token) {
+    public ResponseEntity<String> exchangeToken(@RequestBody Map<String, String> data) throws IOException {
         PlaidApi client = initializeKeys();
+        String public_token = data.get("public_token");
         System.out.println(public_token);
-
-
         // This is where we use the public token and convert it to an access token for the user.
         ItemPublicTokenExchangeRequest exchangeRequest = new ItemPublicTokenExchangeRequest().publicToken(public_token);
-        client.itemPublicTokenExchange(exchangeRequest)
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(@NotNull Call<ItemPublicTokenExchangeResponse> call, @NotNull Response<ItemPublicTokenExchangeResponse> response) {
-                        if (response.isSuccessful()) {
-                            assert response.body() != null; // ngl, i don't know why this was here. Intellij Suggested it just in case of null response. :/
-                            accessToken = response.body().getAccessToken();
-                            // Save access token to database.
-
-                            result = new ResponseEntity<>(accessToken, HttpStatus.OK); // TODO: Please find an alternative to sending this directly to the client as it could be intercepted.
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ItemPublicTokenExchangeResponse> call, Throwable throwable) {
-                        result = new ResponseEntity<>("Unable to complete request. Please contact Customer Support regarding this issue.", HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                });
-        return result;
+        Response<ItemPublicTokenExchangeResponse> response = client.itemPublicTokenExchange(exchangeRequest).execute();
+        if (response.body() != null && response.isSuccessful()) {
+        // Save the access token to the server.
+            return new ResponseEntity<>(response.body().getAccessToken(), HttpStatus.OK);
+        } else {
+            throw new IOException("Failed: " + response);
+        }
     }
 
     // TODO: implement this part please.

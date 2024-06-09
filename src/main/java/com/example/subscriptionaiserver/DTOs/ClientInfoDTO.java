@@ -1,20 +1,22 @@
 package com.example.subscriptionaiserver.DTOs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.plaid.client.model.CountryCode;
+import com.plaid.client.model.LinkTokenAccountFilters;
+import com.plaid.client.model.Products;
+
 import java.util.List;
 import java.util.Map;
 
 public class ClientInfoDTO {
     private List<Map<String, String>> User;
     private String clientName;
-    private ArrayList<String> products;
-    private ArrayList<Map<String, Integer>> transactions;
-    private ArrayList<String> countryCodes;
+    private List<Products> products;
+    private List<Map<String, Integer>> transactions;
+    private List<CountryCode> countryCodes;
     private String language;
     private String redirectURI;
-    private Map<String, ArrayList<Map<String, ArrayList<String>>>> accountFilters;
-    private ArrayList<Map<String, ArrayList<String>>> credit;
+    private LinkTokenAccountFilters accountFilters;
+    private List<Map<String, List<String>>> credit;
 
     public List<Map<String, String>> getUser() {
         return User;
@@ -32,27 +34,27 @@ public class ClientInfoDTO {
         this.clientName = clientName;
     }
 
-    public ArrayList<String> getProducts() {
+    public List<Products> getProducts() {
         return products;
     }
 
-    public void setProducts(ArrayList<String> products) {
+    public void setProducts(List<Products> products) {
         this.products = products;
     }
 
-    public ArrayList<Map<String, Integer>> getTransactions() {
+    public List<Map<String, Integer>> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(ArrayList<Map<String, Integer>> transactions) {
+    public void setTransactions(List<Map<String, Integer>> transactions) {
         this.transactions = transactions;
     }
 
-    public ArrayList<String> getCountryCodes() {
+    public List<CountryCode> getCountryCodes() {
         return countryCodes;
     }
 
-    public void setCountryCodes(ArrayList<String> countryCodes) {
+    public void setCountryCodes(List<CountryCode> countryCodes) {
         this.countryCodes = countryCodes;
     }
 
@@ -72,19 +74,19 @@ public class ClientInfoDTO {
         this.redirectURI = redirectURI;
     }
 
-    public Map<String, ArrayList<Map<String, ArrayList<String>>>> getAccountFilters() {
+    public LinkTokenAccountFilters getAccountFilters() {
         return accountFilters;
     }
 
-    public void setAccountFilters(Map<String, ArrayList<Map<String, ArrayList<String>>>> accountFilters) {
+    public void setAccountFilters(LinkTokenAccountFilters accountFilters) {
         this.accountFilters = accountFilters;
     }
 
-    public ArrayList<Map<String, ArrayList<String>>> getCredit() {
+    public List<Map<String, List<String>>> getCredit() {
         return credit;
     }
 
-    public void setCredit(ArrayList<Map<String, ArrayList<String>>> credit) {
+    public void setCredit(List<Map<String, List<String>>> credit) {
         this.credit = credit;
     }
 }
