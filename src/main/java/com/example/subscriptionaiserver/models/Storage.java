@@ -1,17 +1,19 @@
 package com.example.subscriptionaiserver.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
+@Table(name = "accesskeys")
 public class Storage {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int storageId;
     private String accessToken;
+    @NotNull
     private String username;
+    @NotNull
     private String encrPass;
 
     public String getUsername() {

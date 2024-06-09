@@ -3,6 +3,8 @@ package com.example.subscriptionaiserver.controllers;
 
 import com.example.subscriptionaiserver.DTOs.ClientInfoDTO;
 import com.example.subscriptionaiserver.exceptions.LinkTokenCreationFailedException;
+import com.example.subscriptionaiserver.models.Storage;
+import com.example.subscriptionaiserver.repositories.StorageRepo;
 import com.plaid.client.ApiClient;
 import com.plaid.client.model.*;
 import com.plaid.client.request.PlaidApi;
@@ -15,6 +17,7 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController("/")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -23,6 +26,12 @@ public class PlaidController {
     String clientID;
     @Value("${plaid.client.secret}")
     String secretKey;
+    final StorageRepo<Storage> storageRepo;
+
+    public PlaidController(StorageRepo<Storage> storageRepo) {
+        this.storageRepo = storageRepo;
+    }
+
 
     private PlaidApi initializeKeys() {
         HashMap<String,String> apiKeys = new HashMap<>();
@@ -76,7 +85,14 @@ public class PlaidController {
         Response<ItemPublicTokenExchangeResponse> response = client.itemPublicTokenExchange(exchangeRequest).execute();
         if (response.body() != null && response.isSuccessful()) {
         // Save the access token to the server.
-            return new ResponseEntity<>(response.body().getAccessToken(), HttpStatus.OK);
+            Storage storage = new Storage();
+            storage.setAccessToken(response.body().getAccessToken());
+//            TODO: THIS IS A TEST USER, PLEASE DELETE THIS ONCE OAUTH2 IS SETUP.
+            storage.setUsername("ryekg");
+            storage.setEncrPass("dskfiwqjrgohb3t240gh08eqrjgdahf24");
+//           TODO: END OF TEST USER
+            storageRepo.saveAndFlush(storage);
+            return new ResponseEntity<>(response.message(), HttpStatus.OK);
         } else {
             throw new IOException("Failed: " + response);
         }
