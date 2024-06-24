@@ -11,13 +11,14 @@ import com.plaid.client.request.PlaidApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RestController("/")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -30,6 +31,14 @@ public class PlaidController {
 
     public PlaidController(StorageRepo<Storage> storageRepo) {
         this.storageRepo = storageRepo;
+    }
+
+
+    // Private methods
+
+    private void encrypt(String accessToken) {
+        String encryToken = BCrypt.gensalt(accessToken);
+        System.out.println(encryToken);
     }
 
 
@@ -86,6 +95,9 @@ public class PlaidController {
         if (response.body() != null && response.isSuccessful()) {
         // Save the access token to the server.
             Storage storage = new Storage();
+//            Encrypt Access token, then store it into the server.
+            encrypt(response.body().getAccessToken());
+
             storage.setAccessToken(response.body().getAccessToken());
 //            TODO: THIS IS A TEST USER, PLEASE DELETE THIS ONCE OAUTH2 IS SETUP.
             storage.setUsername("ryekg");
@@ -101,6 +113,7 @@ public class PlaidController {
     // TODO: implement this part please.
     @GetMapping("/login")
     public ResponseEntity<String> login() {
+
         return null;
     }
 
