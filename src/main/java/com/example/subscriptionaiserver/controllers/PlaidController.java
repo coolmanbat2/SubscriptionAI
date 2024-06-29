@@ -1,6 +1,5 @@
 package com.example.subscriptionaiserver.controllers;
 
-
 import com.example.subscriptionaiserver.DTOs.ClientInfoDTO;
 import com.example.subscriptionaiserver.exceptions.LinkTokenCreationFailedException;
 import com.example.subscriptionaiserver.models.Storage;
@@ -8,10 +7,14 @@ import com.example.subscriptionaiserver.repositories.StorageRepo;
 import com.plaid.client.ApiClient;
 import com.plaid.client.model.*;
 import com.plaid.client.request.PlaidApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import retrofit2.Response;
 
@@ -21,16 +24,18 @@ import java.util.Map;
 
 
 @RestController("/")
-@CrossOrigin(origins = "http://localhost:5173")
 public class PlaidController {
+    private final OAuth2AuthorizedClientService authorizedClientService;
     @Value("${plaid.client.id}")
     String clientID;
     @Value("${plaid.client.secret}")
     String secretKey;
     final StorageRepo<Storage> storageRepo;
 
-    public PlaidController(StorageRepo<Storage> storageRepo) {
+    @Autowired
+    public PlaidController(StorageRepo<Storage> storageRepo, OAuth2AuthorizedClientService authorizedClientService) {
         this.storageRepo = storageRepo;
+        this.authorizedClientService = authorizedClientService;
     }
 
 
@@ -111,10 +116,14 @@ public class PlaidController {
     }
 
     // TODO: implement this part please.
-    @GetMapping("/login")
-    public ResponseEntity<String> login() {
-
-        return null;
+    @GetMapping("/success-login")
+    public ResponseEntity<OAuth2AuthorizedClient> successLogin(OAuth2AuthenticationToken authentication) {
+        OAuth2AuthorizedClient client = authorizedClientService
+                .loadAuthorizedClient(
+                        authentication.getAuthorizedClientRegistrationId(),
+                        authentication.getName());
+        System.out.println(client);
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
 }
